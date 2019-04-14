@@ -38,4 +38,48 @@ The demo script intercepts button clicks and extends the context menu of the rig
 - Execute the action to be debugged in PDM.
 - Use the new created **temp file** and the **name of the executed hook** by filling in the required information in the **</Only for debugging>** area in **BiIMainScript.ahk**.
 - Run the debugger for [AutoHotkey](https://www.autohotkey.com).
-- If you are looking for an **IDE**, you will probably find it [**here**](https://github.com/ahkscript/awesome-AutoHotkey#integrated-development-environment).
+
+## Where to find an IDE for AutoHotkey
+- Have a look [here](https://github.com/ahkscript/awesome-AutoHotkey#integrated-development-environment).
+
+## How to start with SQL and AutoHotkey
+- Have a look [here](https://github.com/Jim-VxE/AHK-Lib-ADOSQL) or [here](https://autohotkey.com/board/topic/83542-func-adosql-uses-ado-to-manage-sql-transactions-v503l/).
+
+## How to start with PDM and AutoHotkey
+- Logs in to the specified vault.
+```AutoHotkey
+_vault := ComObjCreate("ConisioLib.EdmVault")			
+_vault.LoginAuto[<vault name>, 0]
+```
+- Gets the PDM file object via file id.
+``` AutoHotkey
+_file := _vault.GetObject(EdmObject_File, <file id>)
+```
+- Gets a variable value by ref. This [script](https://github.com/cocobelgica/AutoHotkey-ComDispatch/blob/master/ComVar.ahk) is required.
+``` AutoHotkey
+_objVarValue := ComVar()
+_var := _file.GetEnumeratorVariable("")
+_var.GetVar(<variable name>, <configuration name>, _objVarValue.ref)
+_varValue := _objVarValue[]
+ComVarDel(_objVarValue)
+
+```
+- Gets a list of names of the configurations for the specified version of this file.
+``` AutoHotkey
+_configList := _file.GetConfigurations()
+_pos := _configList.GetHeadPosition()
+while(!_pos.IsNull){
+	_configurationName := _configList.GetNext(_pos)
+}
+```
+- Searches the vault for files with specific conditions. Have a look at [EdmSearchToken Enumeration](http://help.solidworks.com/2014/english/api/epdmapi/EPDM.Interop.epdm~EPDM.Interop.epdm.EdmSearchToken.html) for possible tokens.
+
+```AutoHotkey
+_search := _vault.CreateSearch()
+_search.SetToken(1, 1)
+;~ Set all required tokens.
+_searchResult := _search.GetFirstResult()
+while(_searchResult){
+	_searchResult := _search.GetNextResult()
+}
+```
