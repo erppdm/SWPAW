@@ -207,6 +207,7 @@ EdmCmd_Menu()
 
 EdmCmd_PreState()
 {
+	;~ Require comment for specific transisiton: https://forum.solidworks.com/thread/215419
 	Global EdmCmd_PreStateFinished
 	doIt := 1
 	if(doIt = 1 && !EdmCmd_PreStateFinished)
