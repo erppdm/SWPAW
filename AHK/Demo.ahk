@@ -31,18 +31,18 @@
 	;~ Functions
 	#Include %A_ScriptDir%\_include\ComByefParameters.ahk ;- Used to get variant values ByRef. In c# it's the 'out' parameter
 	;~ BiI
-	#Include %A_ScriptDir%\_include\BiIVariables.ahk ;~
-	#Include %A_ScriptDir%\_include\BiIDebugMode.ahk ;~
+	#Include %A_ScriptDir%\_include\BiIVariables.ahk
+	#Include %A_ScriptDir%\_include\BiIDebugMode.ahk
 	;~ EPDM_Enums
-	#Include %A_ScriptDir%\_include\EdmObjectType_Enumeration.ahk ;~
-	#Include %A_ScriptDir%\_include\EdmUtility_Enumeration.ahk ;~
+	#Include %A_ScriptDir%\_include\EdmObjectType_Enumeration.ahk
+	#Include %A_ScriptDir%\_include\EdmUtility_Enumeration.ahk
 }
 ;~ </Include>
 
 ;~ <Main Script>
 {
 	;~ Include the main script to start at this point. It was outsourced to improve the clarity of the script
-	#Include %A_ScriptDir%\_include\BiIMainScript.ahk ;~
+	#Include %A_ScriptDir%\_include\BiIMainScript.ahk
 }
 ;~ </Main Script>
 
@@ -66,10 +66,14 @@ UserDefinedChecks()
 	{
 		EdmCmd_Menu()
 	}
+	else if(callUDF = "EdmCmd_PreState") 
+	{
+		EdmCmd_PreState()
+	}
 	else
 	{
 		errorCode := 1
-		errorMsg := "The function isn't available: "%callUDF%
+		errorMsg := "The function is not available: "%callUDF%
 		ScriptExit(vault)
 	}
 	;~ Writes the time difference and message to the debug file if debug mode is enabeld
@@ -80,100 +84,176 @@ UserDefinedChecks()
 
 EdmCmd_CardButton()
 {
-	Global errorCode
-	Global errorMsg
-	Global iniFile
-	Global IniFileSection
-	Global BiIfileName
-	Global BiIfileID
-	Global EdmObject_File
-	;~ Reads the main window handle
-	IniRead, mainHhWnd, %iniFile%, %iniFileSection%, %BiImainWindowHandleInt%,
-	If(mainHhWnd == "" | mainHhWnd = "ERROR")
+	doIt := 1
+	if(doIt = 1)
 	{
-		errorCode := 1
-		errorMsg := "The main window handle cannot be read from the INI file in function 'EdmCmd_Menu'."
-		return
-	}
-	;~ Reads the filename
-	IniRead, fileName, %iniFile%, %IniFileSection%, %BiIfileName%,
-	If(fileName == "" | fileName = "ERROR")
-	{
-		errorCode := 2
-		errorMsg := "Error in function 'EdmCmd_CardButton'"
-		return
-	}
-	;~ Reads the file id
-	IniRead, fileId, %iniFile%, %iniFileSection%, %BiIfileID%,
-	if(fileId = "" | fileId = "ERROR")
-	{
-		errorCode := 4
-		errorMsg := "The file id cannot be read from the INI file in function 'EdmCmd_Menu'."
-		return
-	}
-	;~ Connects to the vault if necessary.
-	ConnectToVault(1)
-	if(errorCode != 0)
-	{			
-		errorCode := 3
-		errorMsg := "Cannot connent to the vault."
-		return
-	}
-	;~ Gets the file object from the vault
-	file := vault.GetObject(EdmObject_File, fileId)
-	if(file = "")
-	{
-		errorCode := 4
-		errorMsg := "The object for the file in the vault cannot be created in function 'EdmCmd_Menu'."
-		return
-	}
-	fId := file.id
-	MsgBox,, SWPAW-Hello World, INI file was read by 'EdmCmd_CardButton', filename: %fileName%, file id from file: %fId%, file id from ini file: %fileId%
+		try
+		{	
+			Global errorCode
+			Global errorMsg
+			Global iniFile
+			Global IniFileSection
+			Global BiIfileName
+			Global BiIfileID
+			Global EdmObject_File
+			;~ Reads the main window handle
+			IniRead, mainHhWnd, %iniFile%, %iniFileSection%, %BiImainWindowHandleInt%,
+			If(mainHhWnd == "" | mainHhWnd = "ERROR")
+			{
+				errorCode := 1
+				errorMsg := "The main window handle cannot be read from the INI file in function 'EdmCmd_CardButton'."
+				return
+			}
+			;~ Reads the filename
+			IniRead, fileName, %iniFile%, %IniFileSection%, %BiIfileName%,
+			If(fileName == "" | fileName = "ERROR")
+			{
+				errorCode := 2
+				errorMsg := "Error in function 'EdmCmd_CardButton'"
+				return
+			}
+			;~ Reads the file id
+			IniRead, fileId, %iniFile%, %iniFileSection%, %BiIfileID%,
+			if(fileId = "" | fileId = "ERROR")
+			{
+				errorCode := 4
+				errorMsg := "The file id cannot be read from the INI file in function 'EdmCmd_CardButton'."
+				return
+			}
+			;~ Connects to the vault if necessary.
+			ConnectToVault(1)
+			if(errorCode != 0)
+			{			
+				errorCode := 3
+				errorMsg := "Cannot connent to the vault."
+				return
+			}
+			;~ Gets the file object from the vault
+			file := vault.GetObject(EdmObject_File, fileId)
+			if(file = "")
+			{
+				errorCode := 4
+				errorMsg := "The object for the file in the vault cannot be created in function 'EdmCmd_CardButton'."
+				return
+			}
+			fId := file.id
+			MsgBox,, SWPAW-Hello World, INI file was read by 'EdmCmd_CardButton', filename: %fileName%, file id from file: %fId%, file id from ini file: %fileId%
+		}
+		catch e
+		{
+			errorCode := 666
+			errorMsg := "A fatal error occured during execution in function 'EdmCmd_CardButton'."
+		}
+	}		
 }
 
 EdmCmd_Menu()
 {
-	;~ Global variables
-	Global errorCode
-	Global errorMsg
-	Global iniFile
-	Global IniFileSection
-	Global BiImenuMenuID
-	Global BiImainWindowHandleInt
-	Global BiIfileName	
-	;~ Reads the main window handle
-	IniRead, mainHhWnd, %iniFile%, %iniFileSection%, %BiImainWindowHandleInt%,
-	If(mainHhWnd == "" | mainHhWnd = "ERROR")
+	doIt := 1
+	if(doIt = 1)
 	{
-		errorCode := 1
-		errorMsg := "The main window handle cannot be read from the INI file in function 'EdmCmd_Menu'."
-		return
-	}
-	;~ Reads the menu id
-	IniRead, menuMenuID, %iniFile%, %IniFileSection%, %BiImenuMenuID%,
-	If(menuMenuID = "" | menuMenuID = "ERROR")
-	{
-		errorCode := 2
-		errorMsg := "The menu id cannot be read from the INI file in function 'EdmCmd_Menu'."
-		return
-	}
-	;~ Runs the routine for the menu with the number 10000
-	if(menuMenuID = 10000) 
-	{
-		;~ Reads the filename
-		IniRead, fileName, %iniFile%, %IniFileSection%, %BiIfileName%,
-		If(fileName == "" | fileName = "ERROR")
+		try
 		{
-			errorCode := 3
-			errorMsg := "Error in function 'EdmCmd_Menu'"
-			return
+			;~ Global variables
+			Global errorCode
+			Global errorMsg
+			Global iniFile
+			Global IniFileSection
+			Global BiImenuMenuID
+			Global BiImainWindowHandleInt
+			Global BiIfileName	
+			;~ Reads the main window handle
+			IniRead, mainHhWnd, %iniFile%, %iniFileSection%, %BiImainWindowHandleInt%,
+			If(mainHhWnd == "" | mainHhWnd = "ERROR")
+			{
+				errorCode := 1
+				errorMsg := "The main window handle cannot be read from the INI file in function 'EdmCmd_Menu'."
+				return
+			}
+			;~ Reads the menu id
+			IniRead, menuMenuID, %iniFile%, %IniFileSection%, %BiImenuMenuID%,
+			If(menuMenuID = "" | menuMenuID = "ERROR")
+			{
+				errorCode := 2
+				errorMsg := "The menu id cannot be read from the INI file in function 'EdmCmd_Menu'."
+				return
+			}
+			;~ Runs the routine for the menu with the number 10000
+			if(menuMenuID = 10000) 
+			{
+				;~ Reads the filename
+				IniRead, fileName, %iniFile%, %IniFileSection%, %BiIfileName%,
+				If(fileName == "" | fileName = "ERROR")
+				{
+					errorCode := 3
+					errorMsg := "Error in function 'EdmCmd_Menu'"
+					return
+				}		
+				MsgBox,, SWPAW-Hello World, INI file was read by 'EdmCmd_Menu' for files, filename: %fileName%
+			}
+			;~ Runs the routine for the menu with the number 10001
+			if(menuMenuID = 10001)
+			{
+				MsgBox,, SWPAW-Hello World, INI file was read by 'EdmCmd_Menu'for folders, folder name: %IniFileSection%
+			}
+		}
+		catch e
+		{
+			errorCode := 666
+			errorMsg := "A fatal error occured during execution in function 'EdmCmd_Menu'."
 		}		
-		MsgBox,, SWPAW-Hello World, INI file was read by 'EdmCmd_Menu' for files, filename: %fileName%
 	}
-	;~ Runs the routine for the menu with the number 10001
-	if(menuMenuID = 10001)
+}
+
+EdmCmd_PreState()
+{
+	Global EdmCmd_PreStateFinished
+	doIt := 1
+	if(doIt = 1 && !EdmCmd_PreStateFinished)
 	{
-		MsgBox,, SWPAW-Hello World, INI file was read by 'EdmCmd_Menu'for folders, folder name: %IniFileSection%
+		;~ Sets the value to 1 to ensure that this routine is executed only once even with multiple selection
+		EdmCmd_PreStateFinished := 1
+		try
+		{
+			;~ Global variables
+			Global errorCode
+			Global errorMsg
+			Global iniFile
+			Global IniFileSection
+			Global BiIpreStateDestinationStateID
+			Global BiIpreStateCommentText
+			;~ Defines the destination status that requires a comment
+			;~ Use this query to get the destination state ids from the data base: Select [StatusID], [Name] From [dbo].[Status]
+			destinationStateIDs := ["1","2"]
+			;~ Reads the destination status id
+			IniRead, preStateDestinationStateID, %iniFile%, %IniFileSection%, %BiIpreStateDestinationStateID%,
+			If(preStateDestinationStateID = "" || preStateDestinationStateID = "ERROR")
+			{
+				errorCode := 1
+				errorMsg := "The destination status can't be read from the INI file in function 'EdmCmd_PreState'."
+				return
+			}
+			;~ Checks if the status requires a comment
+			Loop % destinationStateIDs.Length()
+			{
+				;~ Loop over all destinationStateIDs
+				if(destinationStateIDs[A_Index] = preStateDestinationStateID)
+				{
+					;~ Checks if a comment is given for the requiered destination status id
+					IniRead, preStateCommentText, %iniFile%, %IniFileSection%, %BiIpreStateCommentText%,
+					if(preStateCommentText = "" || preStateCommentText = "ERROR")
+					{
+						errorCode := 1
+						errorMsg := "A comment to change to this status is mandatory. The transition will be cancelled."
+					}
+				}
+			}
+		}
+		catch e
+		{
+			errorCode := 666
+			errorMsg := "A fatal error occured during execution in function 'EdmCmd_PreState'."
+		}
 	}
 }
 ;~ </User functions>
