@@ -1,4 +1,4 @@
-﻿using EdmLib;
+using EdmLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -765,7 +765,7 @@ namespace SWPAW
         {
           // 9 = One or more files are about to have their states changed
           poCmdMgr.AddHook(EdmCmdType.EdmCmd_PreState, null);
-          debugInfo.Append(nameof(EdmCmdType.EdmCmd_PostAdd) + "; ");
+          debugInfo.Append(nameof(EdmCmdType.EdmCmd_PreState) + "; ");
         }
         if (hooks.EdmCmd_PreUndoLock)
         {
@@ -1579,7 +1579,7 @@ namespace SWPAW
         #endregion </EdmCmd_PostShare>
 
         #region <EdmCmd_PreState>
-        if (poCmd.mbCancel == 0 && hookName == nameof(EdmCmdType.EdmCmd_PostAdd))
+        if (poCmd.mbCancel == 0 && hookName == nameof(EdmCmdType.EdmCmd_PreState))
         {
           sysInfo.preStateParentFolderID = ppoData[i].mlObjectID2 == null ? "" : ppoData[i].mlObjectID2.ToString();
           sysInfo.preStateTransitionID = ppoData[i].mlObjectID3 == null ? "" : ppoData[i].mlObjectID3.ToString();
