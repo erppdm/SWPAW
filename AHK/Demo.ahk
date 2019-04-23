@@ -98,7 +98,7 @@ EdmCmd_CardButton()
 			Global EdmObject_File
 			;~ Reads the main window handle
 			IniRead, mainHhWnd, %iniFile%, %iniFileSection%, %BiImainWindowHandleInt%,
-			If(mainHhWnd == "" | mainHhWnd = "ERROR")
+			If(mainHhWnd == "" || mainHhWnd = "ERROR")
 			{
 				errorCode := 1
 				errorMsg := "The main window handle cannot be read from the INI file in function 'EdmCmd_CardButton'."
@@ -106,7 +106,7 @@ EdmCmd_CardButton()
 			}
 			;~ Reads the filename
 			IniRead, fileName, %iniFile%, %IniFileSection%, %BiIfileName%,
-			If(fileName == "" | fileName = "ERROR")
+			If(fileName == "" || fileName = "ERROR")
 			{
 				errorCode := 2
 				errorMsg := "Error in function 'EdmCmd_CardButton'"
@@ -114,7 +114,7 @@ EdmCmd_CardButton()
 			}
 			;~ Reads the file id
 			IniRead, fileId, %iniFile%, %iniFileSection%, %BiIfileID%,
-			if(fileId = "" | fileId = "ERROR")
+			if(fileId = "" || fileId = "ERROR")
 			{
 				errorCode := 4
 				errorMsg := "The file id cannot be read from the INI file in function 'EdmCmd_CardButton'."
@@ -164,7 +164,7 @@ EdmCmd_Menu()
 			Global BiIfileName	
 			;~ Reads the main window handle
 			IniRead, mainHhWnd, %iniFile%, %iniFileSection%, %BiImainWindowHandleInt%,
-			If(mainHhWnd == "" | mainHhWnd = "ERROR")
+			If(mainHhWnd == "" || mainHhWnd = "ERROR")
 			{
 				errorCode := 1
 				errorMsg := "The main window handle cannot be read from the INI file in function 'EdmCmd_Menu'."
@@ -172,7 +172,7 @@ EdmCmd_Menu()
 			}
 			;~ Reads the menu id
 			IniRead, menuMenuID, %iniFile%, %IniFileSection%, %BiImenuMenuID%,
-			If(menuMenuID = "" | menuMenuID = "ERROR")
+			If(menuMenuID = "" || menuMenuID = "ERROR")
 			{
 				errorCode := 2
 				errorMsg := "The menu id cannot be read from the INI file in function 'EdmCmd_Menu'."
@@ -183,7 +183,7 @@ EdmCmd_Menu()
 			{
 				;~ Reads the filename
 				IniRead, fileName, %iniFile%, %IniFileSection%, %BiIfileName%,
-				If(fileName == "" | fileName = "ERROR")
+				If(fileName == "" || fileName = "ERROR")
 				{
 					errorCode := 3
 					errorMsg := "Error in function 'EdmCmd_Menu'"
