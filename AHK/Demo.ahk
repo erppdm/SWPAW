@@ -8,6 +8,7 @@
 ;~ <Global variables>
 	#Include %A_ScriptDir%\_include\BiIConsts.ahk ;~
 	{
+		Global newLine := "{newLine}" ;~ Required to display multiline error messages
 		Global configsDelimiter
 		Global callUDF = ;~ 
 		Global iniFileSection = ;~ Full filename to each file.
