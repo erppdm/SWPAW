@@ -2299,7 +2299,7 @@ namespace SWPAW
                 msg = _msg[_msg.Length - 1].ToString();
                 if (_msg[_msg.Length - 1].ToString().IndexOf(Consts.scriptErrorMsg) == 0)
                 {
-                  msg = msg.Substring(Consts.scriptErrorMsg.Length);
+                  msg = msg.Substring(Consts.scriptErrorMsg.Length).Replace(Consts.sysInfoDelimiterNewLine, Environment.NewLine);
                 }
                 else
                 {
