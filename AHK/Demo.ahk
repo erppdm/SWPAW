@@ -47,6 +47,24 @@
 }
 ;~ </Main Script>
 
+GetFileVarVal(Byref file, varName, ConfigName)
+{
+	try
+	{
+		objEpdmNumber := ComVar()
+		var := file.GetEnumeratorVariable("")
+		var.GetVar(varName, configName, objEpdmNumber.ref)
+		varVal := objEpdmNumber[]
+	}
+	catch e
+	{
+		errorCode := 1
+		errorMsg := "Error in 'GetFileVarVal'." 
+		return
+	}
+	return varVal
+}
+
 ;~ <User functions>
 ;~ <This function will be called for each file or folder in the INI file>
 UserDefinedChecks()
@@ -70,6 +88,10 @@ UserDefinedChecks()
 	else if(callUDF = "EdmCmd_PreState") 
 	{
 		EdmCmd_PreState()
+	}
+	else if(callUDF = "EdmCmd_PreUnlock") 
+	{
+		EdmCmd_PreUnlock()
 	}
 	else
 	{
@@ -258,4 +280,101 @@ EdmCmd_PreState()
 		}
 	}
 }
+
+EdmCmd_PreUnlock()
+{
+	if(errorCode = 0)
+	{
+		;~ <Script as an example of how to read and compare variables and cancel a Check-In if necessary.>
+		EdmCmd_PreUnlock001()
+	}	
+}
+
+;~ <Script as an example of how to read and compare variables and cancel a Check-In if necessary.>
+EdmCmd_PreUnlock001()
+{
+	Global EdmCmd_PreUnlockFinished001
+	doIt := 1
+	if(doIt = 1 && !EdmCmd_PreUnlockFinished001)
+	{
+		;~ Sets the value to 1 to ensure that this routine is executed only once even with multiple selection
+		EdmCmd_PreUnlockFinished001 := 1
+		Global errorCode
+		Global errorMsg
+		Global iniFile
+		Global BiIfileName
+		Global BiIfileID
+		Global EdmObject_File
+		;~ Connects to the vault
+		ConnectToVault(1)
+		if(errorCode != 0)
+		{			
+			errorCode := 1
+			errorMsg := "Cannot connent to the vault."
+			return
+		}
+		try
+		{
+			;~ <Replace these variables with yours>
+			customPropertyName := "BiIRevision"
+			customPorpertyConfig := "Default"
+			msg := "File _file_ custom property _customPropertyName_ = _customPropertyValue_, should be _shouldBeValue_"
+			;~ </Replace these variables with your values>
+			
+			;~ Loop over all sections in the INI file
+			for sectionIndex, sectionItem in iniFileSections 
+			{	
+				;~ Reads the file id
+				IniRead, fileId, %iniFile%, %sectionItem%, %BiIfileID%,
+				if(fileId = "" || fileId = "ERROR")
+				{
+					errorCode := 2
+					errorMsg := "The file id cannot be read from the INI file in function 'EdmCmd_PreUnlock001'."
+					return
+				}
+				;~ Gets the file object from the vault
+				file := vault.GetObject(EdmObject_File, fileId)
+				if(file = "")
+				{
+					errorCode := 3
+					errorMsg := "The object for the file in the vault cannot be created in function 'EdmCmd_PreUnlock001'."
+					return
+				}
+				;~ Gets the values to be compared
+				shouldBeValue := file.CurrentRevision
+				varVal := GetFileVarVal(file, customPropertyName, customPorpertyConfig)
+				if(varVal != shouldBeValue)
+				{
+					;~ Reads the filename
+					IniRead, fileName, %iniFile%, %sectionItem%, %BiIfileName%,
+					If(fileName == "" || fileName = "ERROR")
+					{
+						errorCode := 4
+						errorMsg := "Error in function 'EdmCmd_PreUnlock001'"
+						return
+					}
+					;~ Creates the error message
+					tmpMsg := StrReplace(msg, "_file_", fileName)
+					tmpMsg := StrReplace(tmpMsg, "_customPropertyName_", customPropertyName)
+					tmpMsg := StrReplace(tmpMsg, "_customPropertyValue_", varVal)
+					tmpMsg := StrReplace(tmpMsg, "_shouldBeValue_", shouldBeValue)
+					errorMsg := errorMsg . tmpMsg . newLine
+				}
+			}
+		}
+		catch e
+		{
+			errorCode := 666
+			errorMsg := "A fatal error occured during execution in function 'EdmCmd_PreUnlock001'."	
+			return			
+		}
+		if(errorMsg)
+		{
+			errorCode := 5
+			errorMsg := errorMsg . newLine . "The transition will be canceled."
+			return
+		}
+	}
+}
+;~ <Script as an example of how to read and compare variables and cancel a Check-In if necessary.>
 ;~ </User functions>
