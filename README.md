@@ -83,3 +83,42 @@ while(_searchResult){
 	_searchResult := _search.GetNextResult()
 }
 ```
+
+## How to run scripts in AutoHotkey
+
+To work correctly executed scripts have to return an **ErrorLevel** for the evaluation in the AutoHotkey. All integers except 0 are errors.
+
+- Starts a VBScript and waits for its completion. To return an **ErrorLevel** it ends with **WScript.Quit(0)**. 
+```
+cscript := "C:\Windows\System32\cscript.exe"
+vbscript := "C:\SWPAW\VBS\Demo.vbs"	
+RunWait, %cscript% %vbscript%,, Hide UseErrorLevel, scriptPid
+```
+- Starts a batch script and waits for its completion. To return an **ErrorLevel** it ends with **Exit 0**. 
+```
+batchscript := "C:\SWPAW\BAT\tmp.bat"
+RunWait, %batchscript%,, Show UseErrorLevel, scriptPid
+```
+
+The calling of scripts and programs always follows the above pattern.
+
+- After completion of the script, you can evaluate the **ErrorLevel** and handle errors. Error code and error message will be passed to SWPAW.
+```
+if(ErrorLevel != 0)
+{
+	errorCode := ErrorLevel
+	if(errorCode = 1)
+	{
+		errorMsg := "Error 1 in script."
+	}
+	else if(errorCode = 2)
+	{
+		errorMsg := "Error 2 in script."
+	}		
+	else
+	{
+		errorMsg := "Unknown error " . errorCode . " in script."		
+	}		
+	return		
+}
+```
