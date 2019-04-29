@@ -86,7 +86,7 @@ while(_searchResult){
 
 ## How to run scripts in AutoHotkey
 
-To work correctly executed scripts have to return an **ErrorLevel** for the evaluation in the AutoHotkey. All integers except 0 are errors.
+To work correctly executed scripts have to return an **ErrorLevel** for the evaluation in AutoHotkey. All integers except 0 are errors.
 
 - Starts a VBScript and waits for its completion. To return an **ErrorLevel** it ends with **WScript.Quit(0)**. 
 ```
