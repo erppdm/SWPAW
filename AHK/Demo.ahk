@@ -8,9 +8,9 @@
 ;~ <Global variables>
 	#Include %A_ScriptDir%\_include\BiIConsts.ahk ;~
 	{
-		Global newLine := "{newLine}" ;~ Required to display multiline error messages
+		Global newLine := "{newLine}" ;~ Required to display multiline error messages.
 		Global configsDelimiter
-		Global callUDF = ;~ 
+		Global callUDF = 
 		Global iniFileSection = ;~ Full filename to each file.
 		Global debugFile = ;~ Full name of the debug file.
 		Global iniFile = ;~ Full name of the INI file.
@@ -51,10 +51,10 @@ GetFileVarVal(Byref file, varName, ConfigName)
 {
 	try
 	{
-		objEpdmNumber := ComVar()
+		objVarValue := ComVar()
 		var := file.GetEnumeratorVariable("")
-		var.GetVar(varName, configName, objEpdmNumber.ref)
-		varVal := objEpdmNumber[]
+		var.GetVar(varName, configName, objVarValue.ref)
+		varVal := objVarValue[]
 	}
 	catch e
 	{
@@ -69,7 +69,7 @@ GetFileVarVal(Byref file, varName, ConfigName)
 ;~ <This function will be called for each file or folder in the INI file>
 UserDefinedChecks()
 {
-	;~ <tops the time if debug mode is enabeld
+	;~ <Stops the time if debug mode is enabeld
 	CheckDebugMode(0,"")
 	Global errorCode
 	Global errorMsg
@@ -107,6 +107,83 @@ UserDefinedChecks()
 
 EdmCmd_CardButton()
 {
+	if(errorCode = 0)
+	{
+		EdmCmd_CardButton001()
+	}
+}
+
+EdmCmd_Menu()
+{
+	doIt := 1
+	if(doIt = 1)
+	{
+		try
+		{
+			;~ Global variables
+			Global errorCode
+			Global errorMsg
+			Global iniFile
+			Global IniFileSection
+			Global BiImenuMenuID
+			;~ Reads the menu id
+			IniRead, menuMenuID, %iniFile%, %IniFileSection%, %BiImenuMenuID%,
+			If(menuMenuID = "" || menuMenuID = "ERROR")
+			{
+				errorCode := 2
+				errorMsg := "The menu id cannot be read from the INI file in function 'EdmCmd_Menu'."
+				return
+			}
+			if(menuMenuID = 10000) 
+			{
+				if(errorCode = 0)
+				{
+					;~ Runs the function for the menu with the number 10000
+					EdmCmd_Menu001()
+				}
+			}
+			if(menuMenuID = 10001)
+			{
+				if(errorCode = 0)
+				{
+					;~ Runs the function for the menu with the number 10001
+					EdmCmd_Menu002()
+				}
+			}
+		}
+		catch e
+		{
+			errorCode := 666
+			errorMsg := "A fatal error occured during execution in function 'EdmCmd_Menu'."
+		}		
+	}
+}
+
+EdmCmd_PreState()
+{
+	if(errorCode = 0)
+	{
+		;~ <Require comment for specific transisiton: https://forum.solidworks.com/thread/215419>
+		EdmCmd_PreState001()
+	}
+	if(errorCode = 0)
+	{
+		;~ <How can EPDM Prompt for ECN form During Transition? What kind of Transition action i have to create or add to fullfill the ECO requirement During transition?: https://forum.solidworks.com/thread/216707>
+		EdmCmd_PreState002()
+	}
+}
+
+EdmCmd_PreUnlock()
+{
+	if(errorCode = 0)
+	{
+		;~ <Script as an example of how to read and compare variables and cancel a Check-In if necessary.>
+		EdmCmd_PreUnlock001()
+	}	
+}
+
+EdmCmd_CardButton001()
+{
 	doIt := 1
 	if(doIt = 1)
 	{
@@ -124,7 +201,7 @@ EdmCmd_CardButton()
 			If(mainHhWnd == "" || mainHhWnd = "ERROR")
 			{
 				errorCode := 1
-				errorMsg := "The main window handle cannot be read from the INI file in function 'EdmCmd_CardButton'."
+				errorMsg := "The main window handle cannot be read from the INI file in function 'EdmCmd_CardButton001'."
 				return
 			}
 			;~ Reads the filename
@@ -132,7 +209,7 @@ EdmCmd_CardButton()
 			If(fileName == "" || fileName = "ERROR")
 			{
 				errorCode := 2
-				errorMsg := "Error in function 'EdmCmd_CardButton'"
+				errorMsg := "Error in function 'EdmCmd_CardButton001.'"
 				return
 			}
 			;~ Reads the file id
@@ -140,7 +217,7 @@ EdmCmd_CardButton()
 			if(fileId = "" || fileId = "ERROR")
 			{
 				errorCode := 4
-				errorMsg := "The file id cannot be read from the INI file in function 'EdmCmd_CardButton'."
+				errorMsg := "The file id cannot be read from the INI file in function 'EdmCmd_CardButton001'."
 				return
 			}
 			;~ Connects to the vault if necessary.
@@ -156,7 +233,7 @@ EdmCmd_CardButton()
 			if(file = "")
 			{
 				errorCode := 4
-				errorMsg := "The object for the file in the vault cannot be created in function 'EdmCmd_CardButton'."
+				errorMsg := "The object for the file in the vault cannot be created in function 'EdmCmd_CardButton001'."
 				return
 			}
 			fId := file.id
@@ -170,7 +247,7 @@ EdmCmd_CardButton()
 	}		
 }
 
-EdmCmd_Menu()
+EdmCmd_Menu001()
 {
 	doIt := 1
 	if(doIt = 1)
@@ -182,9 +259,8 @@ EdmCmd_Menu()
 			Global errorMsg
 			Global iniFile
 			Global IniFileSection
-			Global BiImenuMenuID
 			Global BiImainWindowHandleInt
-			Global BiIfileName	
+			Global BiIfileName			
 			;~ Reads the main window handle
 			IniRead, mainHhWnd, %iniFile%, %iniFileSection%, %BiImainWindowHandleInt%,
 			If(mainHhWnd == "" || mainHhWnd = "ERROR")
@@ -193,50 +269,65 @@ EdmCmd_Menu()
 				errorMsg := "The main window handle cannot be read from the INI file in function 'EdmCmd_Menu'."
 				return
 			}
-			;~ Reads the menu id
-			IniRead, menuMenuID, %iniFile%, %IniFileSection%, %BiImenuMenuID%,
-			If(menuMenuID = "" || menuMenuID = "ERROR")
+			;~ Reads the filename
+			IniRead, fileName, %iniFile%, %IniFileSection%, %BiIfileName%,
+			If(fileName == "" || fileName = "ERROR")
 			{
-				errorCode := 2
-				errorMsg := "The menu id cannot be read from the INI file in function 'EdmCmd_Menu'."
+				errorCode := 3
+				errorMsg := "Error in function 'EdmCmd_Menu'"
 				return
-			}
-			;~ Runs the routine for the menu with the number 10000
-			if(menuMenuID = 10000) 
-			{
-				;~ Reads the filename
-				IniRead, fileName, %iniFile%, %IniFileSection%, %BiIfileName%,
-				If(fileName == "" || fileName = "ERROR")
-				{
-					errorCode := 3
-					errorMsg := "Error in function 'EdmCmd_Menu'"
-					return
-				}		
-				MsgBox,, SWPAW-Hello World, INI file was read by 'EdmCmd_Menu' for files, filename: %fileName%
-			}
-			;~ Runs the routine for the menu with the number 10001
-			if(menuMenuID = 10001)
-			{
-				MsgBox,, SWPAW-Hello World, INI file was read by 'EdmCmd_Menu'for folders, folder name: %IniFileSection%
-			}
+			}		
+			MsgBox,, SWPAW-Hello World, INI file was read by 'EdmCmd_Menu' for files, filename: %fileName%
 		}
 		catch e
 		{
 			errorCode := 666
-			errorMsg := "A fatal error occured during execution in function 'EdmCmd_Menu'."
+			errorMsg := "A fatal error occured during execution in function 'EdmCmd_Menu001'."
 		}		
 	}
 }
 
-EdmCmd_PreState()
+EdmCmd_Menu002()
 {
-	;~ Require comment for specific transisiton: https://forum.solidworks.com/thread/215419
-	Global EdmCmd_PreStateFinished
 	doIt := 1
-	if(doIt = 1 && !EdmCmd_PreStateFinished)
+	if(doIt = 1)
+	{
+		try
+		{
+			;~ Global variables
+			Global errorCode
+			Global errorMsg
+			Global iniFile
+			Global IniFileSection
+			Global BiImainWindowHandleInt
+			Global BiIfileName						
+			;~ Reads the main window handle
+			IniRead, mainHhWnd, %iniFile%, %iniFileSection%, %BiImainWindowHandleInt%,
+			If(mainHhWnd == "" || mainHhWnd = "ERROR")
+			{
+				errorCode := 1
+				errorMsg := "The main window handle cannot be read from the INI file in function 'EdmCmd_Menu'."
+				return
+			}
+			MsgBox,, SWPAW-Hello World, INI file was read by 'EdmCmd_Menu'for folders, folder name: %IniFileSection%
+		}
+		catch e
+		{
+			errorCode := 666
+			errorMsg := "A fatal error occured during execution in function 'EdmCmd_Menu002'."
+		}		
+	}
+}
+
+;~ <Require comment for specific transisiton: https://forum.solidworks.com/thread/215419>
+EdmCmd_PreState001() 
+{
+	Global EdmCmd_PreStateFinished001
+	doIt := 1
+	if(doIt = 1 && !EdmCmd_PreStateFinished001)
 	{
 		;~ Sets the value to 1 to ensure that this routine is executed only once even with multiple selection
-		EdmCmd_PreStateFinished := 1
+		EdmCmd_PreStateFinished001 := 1
 		try
 		{
 			;~ Global variables
@@ -248,13 +339,13 @@ EdmCmd_PreState()
 			Global BiIpreStateCommentText
 			;~ Defines the destination status that requires a comment
 			;~ Use this query to get the destination state ids from the data base: Select [StatusID], [Name] From [dbo].[Status]
-			destinationStateIDs := ["1","2"]
+			destinationStateIDs := ["13","16"]
 			;~ Reads the destination status id
 			IniRead, preStateDestinationStateID, %iniFile%, %IniFileSection%, %BiIpreStateDestinationStateID%,
 			If(preStateDestinationStateID = "" || preStateDestinationStateID = "ERROR")
 			{
 				errorCode := 1
-				errorMsg := "The destination status can't be read from the INI file in function 'EdmCmd_PreState'."
+				errorMsg := "The destination status cannot be read from the INI file in function 'EdmCmd_PreState001'."
 				return
 			}
 			;~ Checks if the status requires a comment
@@ -268,7 +359,7 @@ EdmCmd_PreState()
 					if(preStateCommentText = "" || preStateCommentText = "ERROR")
 					{
 						errorCode := 1
-						errorMsg := "A comment to change to this status is mandatory. The transition will be cancelled."
+						errorMsg := "A comment to change to this status is mandatory. The transition will be canceled."
 					}
 				}
 			}
@@ -276,19 +367,123 @@ EdmCmd_PreState()
 		catch e
 		{
 			errorCode := 666
-			errorMsg := "A fatal error occured during execution in function 'EdmCmd_PreState'."
+			errorMsg := "A fatal error occured during execution in function 'EdmCmd_PreState001'."
+		}
+	}	
+}
+;~ <Require comment for specific transisiton: https://forum.solidworks.com/thread/215419>
+
+;~ <How can EPDM Prompt for ECN form During Transition? What kind of Transition action i have to create or add to fullfill the ECO requirement During transition?: https://forum.solidworks.com/thread/216707>
+EdmCmd_PreState002()
+{
+	;~ # This script opens a document template for a specific transition and waits until it is closed. If the document was not edited and simply closed, the transition would be aborted. 
+	Global EdmCmd_PreStateFinished002
+	doIt := 1
+	if(doIt = 1 && !EdmCmd_PreStateFinished002)
+	{
+		;~ Sets the value to 1 to ensure that this routine is executed only once even with multiple selection
+		;~ Comment out this line if you want to create an ECN for each file in a multiple selection
+		;~ EdmCmd_PreStateFinished002 := 1
+		try
+		{
+			;~ Global variables
+			Global errorCode
+			Global errorMsg
+			Global iniFile
+			Global IniFileSection
+			Global BiIpreStateDestinationStateID
+			Global BiIfileCurrentVersion
+			;~ Local variables
+			nextStep := 0
+			;~ <Replace these variables with yours>
+			destFileExtension := ".docx"
+			templateName := "C:\SWPAW\ECN\template\template.docx"
+			destFolder := "C:\SWPAW\ECN\"
+			;~ </Replace these variables with yours>
+
+			;~ Defines the destination status that requires a comment
+			;~ Use this query to get the destination state ids from the data base: Select [StatusID], [Name] From [dbo].[Status]
+			destinationStateIDs := ["13","16"]
+			;~ Reads the destination status from the INI file
+			IniRead, preStateDestinationStateID, %iniFile%, %IniFileSection%, %BiIpreStateDestinationStateID%,
+			If(preStateDestinationStateID  = "" || preStateDestinationStateID  = "ERROR")
+			{
+				errorCode := 1
+				errorMsg := "The destination status cannot be read from the INI file in function 'EdmCmd_PreState002'."
+				return
+			}
+			;~ Checks if destination status is in array destinationStateIDs
+			Loop % destinationStateIDs.Length()
+			{
+				if(destinationStateIDs[A_Index] = preStateDestinationStateID)
+				{
+					nextstep := 1
+					break
+				}
+			}
+			;~ Checks if destination status is processable
+			if(nextStep = 0)
+			{
+				errorCode := 0
+				return
+			}
+			;~ Reads the files current version from the INI file
+			IniRead, fileCurrentVersion, %iniFile%, %IniFileSection%, %BiIfileCurrentVersion%,
+			If(fileCurrentVersion = "" || fileCurrentVersion = "ERROR")
+			{
+				errorCode := 2
+				errorMsg := "The files current version cannot be read from the INI file in function 'EdmCmd_PreState002'."
+				return
+			}
+			;~ Saves the new file and overwrite if it already exists
+			SplitPath, iniFileSection, fName, fDir, fExt
+			;~ Creates the new file Name and copy the template into the destination folder
+			destFileName := destFolder . fName . ".V" . fileCurrentVersion . destFileExtension
+			FileCopy, %templateName%, %destFileName%, 1
+			;~ Checks if the new file has been written
+			IF(!FileExist(destFileName))
+			{
+				errorCode := 3
+				errorMsg := "The file '" . destFileName . "' cannot be written in function 'EdmCmd_PreState002'."
+				return        
+			}
+			;~ Gets the size and the time of the file to compare after RunWait
+			FileGetTime, fileTimeOrg, %destFileName%
+			FileGetSize, fileSizeOrg, %destFileName%
+			;~ Opens the file and waits until the user has saved the file
+			RunWait, %destFileName%,, UseErrorLevel, destProghWnd
+			;~ Checks again if the new file exists
+			IF(!FileExist(destFileName))
+			{
+				errorCode := 4
+				errorMsg := "The file '" . destFileName . "' has been deleted. This is a message from function 'EdmCmd_PreState002'."
+				return        
+			}
+			;~ Gets the size and the time of the file again to compare
+			FileGetTime, fileTimeNew, %destFileName%
+			FileGetSize, fileSizeNew, %destFileName%
+			If(fileTimeOrg = fileTimeNew)
+			{
+				errorCode := 5
+				errorMsg := "The file date of '" . destFileName . "' hasn't been changed. This is a message from function 'EdmCmd_PreState002'."
+				return              
+			}
+			;~ Checks old and new file size to check for changes
+			If(fileSizeOrg = fileSizeNew)
+			{
+				errorCode := 6
+				errorMsg := "The file size of '" . destFileName . "' hasn't been changed. This is a message from function 'EdmCmd_PreState002'." 
+				return        
+			}
+		}
+		catch e
+		{
+			errorCode := 666
+			errorMsg := "A fatal error occured during execution in function 'EdmCmd_PreState002'."
 		}
 	}
 }
-
-EdmCmd_PreUnlock()
-{
-	if(errorCode = 0)
-	{
-		;~ <Script as an example of how to read and compare variables and cancel a Check-In if necessary.>
-		EdmCmd_PreUnlock001()
-	}	
-}
+;~ </How can EPDM Prompt for ECN form During Transition? What kind of Transition action i have to create or add to fullfill the ECO requirement During transition?: https://forum.solidworks.com/thread/216707>
 
 ;~ <Script as an example of how to read and compare variables and cancel a Check-In if necessary.>
 EdmCmd_PreUnlock001()
@@ -318,8 +513,8 @@ EdmCmd_PreUnlock001()
 			;~ <Replace these variables with yours>
 			customPropertyName := "BiIRevision"
 			customPorpertyConfig := "Default"
-			msg := "File _file_ custom property _customPropertyName_ = _customPropertyValue_, should be _shouldBeValue_"
-			;~ </Replace these variables with your values>
+			msg := "Message to user - file _file_ custom property _customPropertyName_ = _customPropertyValue_, should be _shouldBeValue_"
+			;~ <Replace these variables with yours>
 			
 			;~ Loop over all sections in the INI file
 			for sectionIndex, sectionItem in iniFileSections 
@@ -376,5 +571,6 @@ EdmCmd_PreUnlock001()
 		}
 	}
 }
-;~ <Script as an example of how to read and compare variables and cancel a Check-In if necessary.>
+;~ </Script as an example of how to read and compare variables and cancel a Check-In if necessary.>
+
 ;~ </User functions>
