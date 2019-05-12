@@ -1,7 +1,7 @@
 # SWPAW
 **S**olid**W**orks **P**DM **A**dd-In **W**rapper
 
-A wrapper to create SolidWorks PDM add-ins in any language
+A wrapper making possible to create SolidWorks Professional PDM add-ins in any programming language, including scripting languages.
 
 ## Workflow
 ![](http://bii.erppdm.com/images/Ulf-Dirk%20Stockburger_bii_pdm_add-in.svg)
