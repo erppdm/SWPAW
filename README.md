@@ -13,7 +13,28 @@ A wrapper making possible to create SolidWorks Professional PDM add-ins in any p
 - SolidWorks Enterprise PDM 2014 SP0
 
 ## Getting Started
+
+**.NET 2.0**
 - Add the EPDM **Interop.epdm.dll/Runtime Version: v2.0.50727** to the references.
+- Comment out the following in **SWPAWSourceCode\SWPAW.cs**
+
+  **using EdmLib;**
+  
+  **public void OnCmd(ref EdmCmd poCmd, ref Array ppoData)**
+  
+  **System.Array user8Groups = null;**
+
+**.NET 4.0**
+- Add the EPDM **EPDM.Interop.epdm.dll/Runtime Version: v4.0.30319** to the references.
+- Comment out the following in **SWPAWSourceCode\SWPAW.cs**
+
+  **using EPDM.Interop.epdm;**
+
+  **public void OnCmd(ref EdmCmd poCmd, ref file mdData[] ppoData)**
+  
+  **object[] user8Groups = null;**
+
+Both versions
 - Sign the assembly. 
 - Compile the add-in.
 - Create the user environment variable **SWPAW.ini** and assign the full filename to it.
