@@ -1,4 +1,5 @@
-using EdmLib;
+//using EPDM.Interop.epdm;
+//using EdmLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -190,7 +191,7 @@ namespace SWPAW
     // CLR4
     //public void OnCmd(ref EdmCmd poCmd, ref EdmCmdData[] ppoData)
     // CLR2
-    public void OnCmd(ref EdmCmd poCmd, ref Array ppoData)
+    //public void OnCmd(ref EdmCmd poCmd, ref Array ppoData)
     {
       IEdmVault5 vault5 = poCmd.mpoVault as IEdmVault5;
       try
@@ -1128,7 +1129,7 @@ namespace SWPAW
             // CLR4
             //object[] user8Groups = null;
             // CLR2
-            System.Array user8Groups = null;
+            //System.Array user8Groups = null;
             user8.GetGroupMemberships(out user8Groups);
             foreach (IEdmUserGroup7 userGroup in user8Groups)
             {
