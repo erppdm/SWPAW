@@ -93,6 +93,10 @@ UserDefinedChecks()
 	{
 		EdmCmd_PreUnlock()
 	}
+	else if(callUDF = "EdmCmd_PostAdd") 
+	{
+		EdmCmd_PostAdd()
+	}	
 	else
 	{
 		errorCode := 1
@@ -315,6 +319,14 @@ EdmCmd_Menu002()
 	}
 }
 
+EdmCmd_PostAdd()
+{
+	if(errorCode = 0)
+	{
+		;~ PDM - Multiple serial numbers: https://forum.solidworks.com/thread/214067>
+		EdmCmd_PostAdd001()
+	}	
+}
 ;~ <Rename the selected files in the vault based on their serial numbers>
 EdmCmd_Menu003()
 {
@@ -773,5 +785,135 @@ EdmCmd_PreUnlock001()
 	}
 }
 ;~ </Script as an example of how to read and compare variables and cancel a Check-In if necessary.>
+
+;~ <PDM - Multiple serial numbers: https://forum.solidworks.com/thread/214067>
+EdmCmd_PostAdd001()
+{
+	;~ This example only works correctly in Windows Explorer. The name of the directory in which the new files are created must match this ^.{7}$ pattern. All files with the extension .txt will be renamed.
+	;~ 
+	;~ For this example, only the current user's vault on the local disk is checked. Therefore this example is not useful for production systems.
+	;~ If such a number generator is to be used in a production system, the SQL database must be queried for the next free number.
+	;~ 
+	;~ This query returns all filenames in all directories in the vault.
+	;~ SELECT (SELECT [VaultName]
+		;~ FROM [BiIEpdmVault].[dbo].[ArchiveServers]
+		;~ ) + T2.[Path] + T0.[filename]
+	;~ FROM [Documents] T0
+	;~ INNER JOIN [DocumentsInProjects] T1 ON T0.[DocumentID] = T1.[DocumentID]
+	;~ INNER JOIN [Projects] T2 ON T2.[ProjectID] = T1.[ProjectID]
+	;~ 
+	;~ The Section <Determines the next free file number using the file names in the current directory> must be modified so that the filenames from the SQL query, and not the filename from the local disk, are processed. 
+	{
+	  Global EdmObject_Folder
+	  Global EdmObject_File
+	  Global errorCode
+	  Global errorMsg
+	  Global iniFile
+	  Global IniFileSection
+	  Global BiIfileName
+	  Global BiIfileID
+	  Global BiImainWindowHandleInt
+	  Global BiIpostAddParentFolderID
+	  Global BiIfileID
+	  ;~ Connects to the vault if necessary.
+	  ConnectToVault(1)
+	  ;~ Reads the main window handle
+	  IniRead, mainHhWnd, %iniFile%, %iniFileSection%, %BiImainWindowHandleInt%,
+	  If(mainHhWnd == "" | mainHhWnd = "ERROR")
+	  {
+		errorCode := 1
+		errorMsg := "The main window handle cannot be read from the INI file in function 'EdmCmd_PostAdd'."
+		return
+	  }
+	  ;~ Reads the parent folder of the new file
+	  IniRead, postAddParentFolderID, %iniFile%, %IniFileSection%, %BiIpostAddParentFolderID%,
+	  If(postAddParentFolderID = "" | postAddParentFolderID = "ERROR")
+	  {
+		errorCode := 1
+		errorMsg := "The parent folder id cannot be read from the INI file in function 'EdmCmd_PostAdd'."
+		return
+	  }
+	  ;~ Reads the file id of the new file
+	  IniRead, fileID, %iniFile%, %IniFileSection%, %BiIfileID%,
+	  If(fileID = "" | fileID = "ERROR")
+	  {
+		errorCode := 1
+		errorMsg := "The file id cannot be read from the INI file in function 'EdmCmd_PostAdd'."
+		return
+	  }
+	  ;~ Gets the folder object from vault
+	  folder := vault.GetObject(EdmObject_Folder, postAddParentFolderID)
+	  If(folder = "" )
+	  {
+		errorCode := 1
+		errorMsg := "The object for the parent folder cannot be fetched in function 'EdmCmd_PostAdd'."
+		return
+	  }
+	  
+	  ;~ <Determines the next free file number using the file names in the current directory>
+	  try
+	  {
+		folderDelimiter := "\"
+		;~ Array for the file names matching the pattern
+		fileNameArray := []
+		;~ Gets the file's name and directory
+		SplitPath, iniFileSection,fName, fDir, fExt
+		;~ Gets the directory name in which the file is stored
+		folderArray := StrSplit(fDir, folderDelimiter)
+		;~ Creates the RegEx pattern for file names
+		fDirRegExPattern := ".*" . folderArray[folderArray.Length()] ".*"
+		;~ Loop over files in the directory
+		loopOver :=  fDir . "\*.*"
+		;~ Gets all files in current folder
+		Loop Files, %loopOver%
+		{
+		  ;~ Checks if the filename matches the pattern
+		  if(RegExMatch(A_LoopFileName, fDirRegExPattern) = 1)
+		  {
+			StringMid, fileNum, A_LoopFileName, 9, 3
+			Number := (fileNum . String) , Number += 0
+			fileNameArray.Push(Number)
+		  }
+		}
+		;~ Gets the highest file number
+		lastFileNumber := 0
+		Loop % fileNameArray.Length()
+		{
+		  tmpNumber := fileNameArray[A_Index]
+		  if (tmpNumber > lastFileNumber)
+			lastFileNumber := tmpNumber
+		}
+		;~ Creates the new file name
+		newFileName := folderArray[folderArray.Length()] . "-" . Format("{:03}", lastFileNumber + 1) . "." . fExt
+	  }
+	  catch e
+	  {
+		errorCode := 1
+		errorMsg := "The new file name cannot be determined in function 'EdmCmd_PostAdd'."
+		return
+	  }
+	  ;~ </Determines the next free file number using the file names in the current directory>
+	  
+	  ;~ Renames the new file
+	  try
+	  {
+		file := vault.GetObject(EdmObject_File, fileId)
+		file.RenameEx(mainHhWnd,newFileName,0)
+	  }
+	  catch e
+	  {
+		errorCode := 1
+		errorMsg := "The file cannot be renamed in function 'EdmCmd_PostAdd'."
+		return
+	  }
+	  if(!file)
+	  {
+		errorCode := 1
+		errorMsg := "The file cannot be renamed in function 'EdmCmd_PostAdd'."
+		return
+	  }  
+	}
+}
+;~ </PDM - Multiple serial numbers: https://forum.solidworks.com/thread/214067>
 
 ;~ </User functions>
