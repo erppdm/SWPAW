@@ -17,7 +17,7 @@ An example of a COM-Server to extend SolidWorks PDM functionality which can be u
 As soon as the given functionality is no longer sufficient, or to optimise the process.
 
 ## Why to programme a COM-Server for SolidWorks PDM?
-Unfortunately, several interfaces cannot be used via COM. These are until version 2014, as far as I know.
+Unfortunately, several interfaces cannot be used via COM. As far as I know, these utilities are not available until version 2014:
 
 - EdmUtil_RawReferenceMgr
 - EdmUtil_RevisionMgr
