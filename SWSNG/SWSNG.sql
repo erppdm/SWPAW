@@ -274,7 +274,7 @@ SELECT 1
 GO
 -- <Inserts the example data>
 
--- <Creates the stored procedure>
+-- <Creates the stored procedures>
 USE [SWSNG]
 GO
 
@@ -395,4 +395,26 @@ BEGIN
 		END
 	END CATCH
 END
--- </Creates the stored procedure>
+GO
+
+CREATE PROCEDURE [dbo].[GetNoRanges] @errCode NVARCHAR(MAX) OUTPUT
+	,@errMsg NVARCHAR(MAX) OUTPUT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SET @errCode = 0;
+	SET @errMsg = N'OK';
+
+	BEGIN TRY
+		SELECT [scheme]
+		FROM [dbo].[SerialNo]
+		ORDER BY [scheme] ASC
+	END TRY
+
+	BEGIN CATCH
+		SET @errCode = 666;
+		SET @errMsg = N'Try catch error in [GetNoRanges]';
+	END CATCH
+END
+GO
+-- </Creates the stored procedures>
