@@ -3,9 +3,17 @@
 
 A wrapper making possible to create SolidWorks Professional PDM add-ins in any programming language, including scripting languages.
 
+## Why
+Actually I developed this PDM Add-In for my own prototype programming. After a short time it turned out that it is also suitable for everyday use. That's why I decided to make it available to the public to allow every PDM administrator developing own add-ins in the preferred language.
+
 ## Workflow
+Before the script is executed, a set of default information for the executed event will be created and given to the script. Simple evaluations are possible without having access to the PDM-API. Further information can be collected via SQL and PDM-API. A prerequisite to use the PDM-API is that the chosen language supports [COM](https://en.wikipedia.org/wiki/Component_Object_Model).
+
 ![](http://bii.erppdm.com/images/Ulf-Dirk%20Stockburger_bii_pdm_add-in.svg)
 [Further information about this project](http://bii.erppdm.com/BiIUniversalExistingFunctionalityLong.html "Further Information")
+
+## Limitations
+It is important to know that for time-critical add-ins or actions that cannot be executed outside the current thread, programming in .NET or C++ cannot be avoided. Nevertheless, there are a lot of tasks that can also be implemented without .NET or C++ knowledge. And this, from my point of view, with less code in a short time. The prerequisite is that you master your chosen language.
 
 ## Minimum Prerequisites
 - C# 6 
