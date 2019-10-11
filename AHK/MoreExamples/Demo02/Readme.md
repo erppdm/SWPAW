@@ -7,8 +7,8 @@ This example works correctly in Windows Explorer if only one file has been creat
 in which the new files are created must match this **^.{7}$** pattern. All files with the extension **.txt** will be renamed.
 In production systems, instead of the local hard disk the vault database has to be checked for existing files.
 
+This query returns all filenames in all directories in the vault.
 ```sql
--- This query returns all filenames in all directories in the vault.
 SELECT (SELECT [VaultName]
 	FROM [BiIEpdmVault].[dbo].[ArchiveServers]
 	) + T2.[Path] + T0.[filename]
@@ -16,3 +16,5 @@ FROM [Documents] T0
 INNER JOIN [DocumentsInProjects] T1 ON T0.[DocumentID] = T1.[DocumentID]
 INNER JOIN [Projects] T2 ON T2.[ProjectID] = T1.[ProjectID]
 ```
+
+[SWSNG](https://github.com/erppdm/SWSNG/tree/master/SQL#swsng), a SQL-based Serial No. Generator.
